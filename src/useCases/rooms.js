@@ -46,18 +46,18 @@ const create = async () => {
  * @param {String} player1 - Id of player 1
  * @param {String} player2 - Id of player 2
  */
-const addPlayer = async (roomId, player1, player2) => {
+const addPlayer = async ({ room, player1, player2 }) => {
   let updateParams = {};
   if (player1) updateParams = { $set: { 'player1.user': player1 } };
   if (player2) updateParams = { $set: { 'player2.user': player2 } };
 
   // Add player
-  const updateStatus = Room.update({
-    _id: roomId,
+  const updateStatus = await Room.update({
+    _id: room,
   }, updateParams);
 
   if ((updateStatus.ok === 0) || (updateStatus.nModified === 0)) {
-    logger.error(`(rps-room-module): Error adding player to room: ${err.message}`);
+    logger.error('(rps-room-module): Error adding player to room');
     throw new BusinessError(errorNames.ROOM_DOES_NOT_EXISTS, 'rps-room-module');
   }
 };
@@ -69,7 +69,7 @@ const addPlayer = async (roomId, player1, player2) => {
  * @param {Number} round - Round number
  */
 const addGameRound = async ({ room, winner, round }) => {
-  const updateStatus = Room.update({
+  const updateStatus = await Room.update({
     _id: room,
   }, {
     $push: {
@@ -78,7 +78,7 @@ const addGameRound = async ({ room, winner, round }) => {
   });
 
   if ((updateStatus.ok === 0) || (updateStatus.nModified === 0)) {
-    logger.error(`(rps-room-module): Error adding game round to room: ${err.message}`);
+    logger.error('(rps-room-module): Error adding game round to room');
     throw new BusinessError(errorNames.ROOM_DOES_NOT_EXISTS, 'rps-room-module');
   }
 };

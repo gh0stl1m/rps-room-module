@@ -1,3 +1,4 @@
 // Interfaces
+const roomInterface = require('./rooms');
 
-module.exports = {};
+module.exports = { roomInterface };
