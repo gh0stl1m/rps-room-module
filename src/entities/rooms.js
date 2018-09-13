@@ -17,7 +17,7 @@ const Room = new Schema({
   },
   games: [{
     winner: { type: String },
-    round: { type: Number, default: 1 },
+    choice: { type: String },
   }],
 }, {
   timestamps: true,

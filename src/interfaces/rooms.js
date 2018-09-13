@@ -43,9 +43,9 @@ const AddPlayer = async ({ room, player1, player2 } = {}) => {
  * @param {String} winner - Id of winner
  * @param {Number} round - Round number
  */
-const AddGameRound = async ({ room, winner, round } = {}) => {
-  if (!room || !winner || !round) throw new BusinessError(errorNames.PARAMS_REQUIRED, 'rps-room-module');
-  const userWinner = await rooms.addGameRound({ room, winner, round });
+const AddGameRound = async ({ room, winner, choice } = {}) => {
+  if (!room || !winner || !choice) throw new BusinessError(errorNames.PARAMS_REQUIRED, 'rps-room-module');
+  const userWinner = await rooms.addGameRound({ room, winner, choice: choice.toUpperCase() });
 
   return userWinner;
 };

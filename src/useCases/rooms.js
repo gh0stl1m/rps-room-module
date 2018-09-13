@@ -66,9 +66,9 @@ const addPlayer = async ({ room, player1, player2 }) => {
  * Method to add round game to room
  * @param {String} room -Id of room
  * @param {String} winner - Id of winner
- * @param {Number} round - Round number
+ * @param {Number} choice - User choice
  */
-const addGameRound = async ({ room, winner, round }) => {
+const addGameRound = async ({ room, winner, choice }) => {
   const playerWin = await readOne({
     $and: [
       { _id: room },
@@ -78,7 +78,7 @@ const addGameRound = async ({ room, winner, round }) => {
       ] },
     ],
   });
-  const updateParams = { $push: { games: { winner, round } } };
+  const updateParams = { $push: { games: { winner, choice } } };
   if (playerWin.player1) {
     updateParams.$inc = { 'player1.wins': 1 };
   } else {
