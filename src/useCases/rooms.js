@@ -77,9 +77,9 @@ const addGameRound = async ({ room, winner, choice }) => {
         { 'player2.user': winner },
       ] },
     ],
-  });
+  }, { player1: 1, player2: 1 });
   const updateParams = { $push: { games: { winner, choice } } };
-  if (playerWin.player1) {
+  if (playerWin.player1.user === winner) {
     updateParams.$inc = { 'player1.wins': 1 };
   } else {
     updateParams.$inc = { 'player2.wins': 1 };
