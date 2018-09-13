@@ -69,18 +69,47 @@ const addPlayer = async ({ room, player1, player2 }) => {
  * @param {Number} round - Round number
  */
 const addGameRound = async ({ room, winner, round }) => {
-  const updateStatus = await Room.update({
-    _id: room,
-  }, {
-    $push: {
-      games: { winner, round },
-    },
+  const playerWin = await readOne({
+    $and: [
+      { _id: room },
+      { $or: [
+        { 'player1.user': winner },
+        { 'player2.user': winner },
+      ] },
+    ],
   });
+  const updateParams = { $push: { games: { winner, round } } };
+  if (playerWin.player1) {
+    updateParams.$inc = { 'player1.wins': 1 };
+  } else {
+    updateParams.$inc = { 'player2.wins': 1 };
+  }
+  const updateStatus = await Room.update({
+    $and: [
+      { _id: room },
+      { $or: [
+        { 'player1.user': winner },
+        { 'player2.user': winner },
+      ] },
+    ],
+  }, updateParams);
 
   if ((updateStatus.ok === 0) || (updateStatus.nModified === 0)) {
     logger.error('(rps-room-module): Error adding game round to room');
     throw new BusinessError(errorNames.ROOM_DOES_NOT_EXISTS, 'rps-room-module');
   }
+  // Validate if winner exists
+  const userWinner = await readOne({
+    $and: [
+      { _id: room },
+      { $or: [
+        { 'player1.wins': { $gte: 3 } },
+        { 'player2.wins': { $gte: 3 } },
+      ] },
+    ],
+  }, { _id: 1, player1: 1, player2: 1 });
+
+  return userWinner;
 };
 
 module.exports = {
